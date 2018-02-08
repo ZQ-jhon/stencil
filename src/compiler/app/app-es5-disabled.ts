@@ -40,7 +40,12 @@ function getDisabledMessageScript() {
   }
   </style>
 
-  <h1>This Stencil app is disabled for this browser.</h1>
+  <h1>Gadzooks! Stencil detected this browser doesn't support fully support ES2015</h1>
+
+  <h2>tl;dr - Use a newer browser, or enable es5 development builds w/ the following</h2>
+  <pre>
+    <code>run run dev --es5
+  </pre>
 
   <h2>Developers:</h2>
   <ul>
