@@ -1,6 +1,7 @@
 import addComponentMetadata from './transformers/add-component-metadata';
 import { BuildCtx, CompilerCtx, Config, Diagnostic, FsWriteResults, ModuleFiles, TranspileResults } from '../../declarations';
 import { componentDependencies } from './transformers/component-dependencies';
+import { discoverCollections } from './transformers/discover-collections';
 import { gatherMetadata } from './datacollection/index';
 import { generateComponentTypesFile } from './create-component-types';
 import { getComponentsDtsSrcFilePath } from '../build/distribution';
@@ -109,7 +110,8 @@ function transpileProgram(program: ts.Program, tsHost: ts.CompilerHost, config: 
   program.emit(undefined, tsHost.writeFile, undefined, false, {
     before: [
       removeDecorators(),
-      addComponentMetadata(compilerCtx.moduleFiles)
+      addComponentMetadata(compilerCtx.moduleFiles),
+      discoverCollections(config, compilerCtx)
     ],
     after: [
       removeImports(),

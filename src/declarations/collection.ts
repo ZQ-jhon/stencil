@@ -1,21 +1,15 @@
 import * as d from './index';
 
 
-export interface Manifest {
+export interface Collection {
   collectionName?: string;
   moduleFiles?: ModuleFile[];
   global?: ModuleFile;
-  dependentManifests?: Manifest[];
-  compiler?: ManifestCompiler;
+  compiler?: CollectionCompiler;
 }
 
 
-export interface ManifestBundle {
-  components: string[];
-}
-
-
-export interface ManifestCompiler {
+export interface CollectionCompiler {
   name: string;
   version: string;
   typescriptVersion?: string;
@@ -67,7 +61,7 @@ export interface ModuleBundles {
 // DO NOT UPDATE PROPERTY KEYS COMING FROM THE EXTERNAL DATA!!
 // DO NOT UPDATE PROPERTY KEYS COMING FROM THE EXTERNAL DATA!!
 
-export interface ManifestData {
+export interface CollectionData {
   components?: ComponentData[];
   global?: string;
   compiler?: {

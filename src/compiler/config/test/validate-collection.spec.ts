@@ -1,8 +1,8 @@
-import { DependentCollection, Manifest, ManifestBundle } from '../../../util/interfaces';
+import { Collection } from '../../../declarations';
 import { validateDependentCollection } from '../validate-collection';
 
 
-describe('manifest', () => {
+describe('collection', () => {
 
   describe('validateDependentCollection', () => {
 
