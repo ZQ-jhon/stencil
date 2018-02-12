@@ -4,11 +4,13 @@ import { componentDependencies } from './transformers/component-dependencies';
 import { discoverCollections } from './transformers/discover-collections';
 import { gatherMetadata } from './datacollection/index';
 import { generateComponentTypesFile } from './create-component-types';
+import { calcComponentDependencies } from '../entries/component-dependencies';
 import { getComponentsDtsSrcFilePath } from '../build/distribution';
 import { getTsHost } from './compiler-host';
 import { getUserTsConfig } from './compiler-options';
 import { hasError, normalizePath } from '../util';
 import { loadTypeScriptDiagnostics } from '../../util/logger/logger-typescript';
+import { moduleGraph } from './transformers/module-graph';
 import { normalizeAssetsDir } from '../component-plugins/assets-plugin';
 import { normalizeStyles } from './normalize-styles';
 import { removeDecorators } from './transformers/remove-decorators';
@@ -111,14 +113,18 @@ function transpileProgram(program: ts.Program, tsHost: ts.CompilerHost, config: 
     before: [
       removeDecorators(),
       addComponentMetadata(compilerCtx.moduleFiles),
-      discoverCollections(config, compilerCtx)
+      discoverCollections(config, compilerCtx),
+      moduleGraph(config, buildCtx)
     ],
     after: [
       removeImports(),
       removeStencilImports(),
-      componentDependencies(compilerCtx.moduleFiles)
+      componentDependencies(compilerCtx, buildCtx)
     ]
   });
+
+  // figure out how modules and components connect
+  calcComponentDependencies(compilerCtx.moduleFiles, buildCtx.moduleGraph, buildCtx.componentRefs);
 
   if (!config.suppressTypeScriptErrors) {
     // suppressTypeScriptErrors mainly for unit testing
