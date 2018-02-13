@@ -72,7 +72,7 @@ export function serializeAppCollection(config: Config, collectionDir: string, en
 }
 
 
-export function parseCollectionData(config: Config, collectionName: string, includeBundledOnly: boolean, collectionDir: string, collectionJsonStr: string) {
+export function parseCollectionData(config: Config, collectionName: string, collectionDir: string, collectionJsonStr: string) {
   const collectionData: CollectionData = JSON.parse(collectionJsonStr);
   const collection: Collection = {
     collectionName: collectionName,
@@ -83,25 +83,19 @@ export function parseCollectionData(config: Config, collectionName: string, incl
     }
   };
 
-  parseComponents(config, includeBundledOnly, collectionDir, collectionData, collection);
+  parseComponents(config, collectionDir, collectionData, collection);
   parseGlobal(config, collectionDir, collectionData, collection);
 
   return collection;
 }
 
 
-export function parseComponents(config: Config, includeBundledOnly: boolean, collectionDir: string, collectionData: CollectionData, collection: Collection) {
-  let componentsData = collectionData.components;
+export function parseComponents(config: Config, collectionDir: string, collectionData: CollectionData, collection: Collection) {
+  const componentsData = collectionData.components;
 
   if (!componentsData || !Array.isArray(componentsData)) {
     collection.moduleFiles = [];
     return;
-  }
-
-  if (includeBundledOnly) {
-    componentsData = componentsData.filter(cmpData => {
-      return config.bundles.some(configBundle => configBundle.components.includes(cmpData.tag));
-    });
   }
 
   collection.moduleFiles = componentsData.map(cmpData => {

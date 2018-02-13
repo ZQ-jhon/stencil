@@ -1,4 +1,5 @@
 import { CompilerCtx, Config } from '../../../declarations';
+import { parseCollectionModule } from '../../collections/parse-collection-module';
 import * as ts from 'typescript';
 
 
@@ -23,14 +24,14 @@ export function discoverCollections(config: Config, compilerCtx: CompilerCtx): t
         return importNode;
       }
 
-      // cache that we've already done this once
+      // cache that we've already parsed this already
       compilerCtx.resolvedModuleIds.push(moduleId);
 
-      let resolvedModule: string;
+      let packageJsonFilePath: string;
 
       try {
         // get the full package.json file path
-        resolvedModule = config.sys.resolveModule(config.rootDir, moduleId);
+        packageJsonFilePath = config.sys.resolveModule(config.rootDir, moduleId);
 
       } catch (e) {
         // it's someone else's job to handle unresolvable paths
@@ -38,15 +39,18 @@ export function discoverCollections(config: Config, compilerCtx: CompilerCtx): t
       }
 
       // open up and parse the package.json
-      const packageJsonStr = compilerCtx.fs.readFileSync(resolvedModule);
-      const packageJson = JSON.parse(packageJsonStr);
+      // sync on purpose :(
+      const packageJsonStr = compilerCtx.fs.readFileSync(packageJsonFilePath);
+      const packageJsonData = JSON.parse(packageJsonStr);
 
-      if (!packageJson.collection) {
+      if (!packageJsonData.collection) {
         // this import is not a stencil collection
         return importNode;
       }
 
-      console.log(packageJson)
+      // this import is a stencil collection
+      // let's parse it and gather all the module data about it
+      parseCollectionModule(config, compilerCtx, packageJsonFilePath, packageJsonData);
 
       return importNode;
     }

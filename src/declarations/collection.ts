@@ -6,6 +6,7 @@ export interface Collection {
   moduleFiles?: ModuleFile[];
   global?: ModuleFile;
   compiler?: CollectionCompiler;
+  isInitialized?: boolean;
 }
 
 
